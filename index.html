@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Asset Vision</title><link rel="stylesheet" href="./style.css"></head>
+<body>
+<header><h1>Asset Vision</h1><div class="subtitle" id="appVer">loading...</div></header>
+<main>
+<section class="cards" id="summary"></section>
+<section class="card section"><h2>資産グループ</h2><div class="tableWrap" id="channelTable"></div></section>
+<section class="card section"><h2>資産推移</h2><div class="toolbar"><select id="channelSelect"></select><button data-range="1M">1か月</button><button data-range="3M">3か月</button><button data-range="6M">半年</button><button data-range="1Y">1年</button><button data-range="all">全期間</button></div><div class="chartBox" id="chart"></div><div class="chartStatus" id="chartStatus"></div></section>
+<section class="card section"><h2>日次データ登録</h2>
+  <div class="dailyTabs"><button class="dailyTab" type="button" disabled>手入力</button><button class="dailyTab importProfileTab active" type="button" data-import-profile="sbiIdeco">SBI iDeCo取込</button><button class="dailyTab importProfileTab" type="button" data-import-profile="saisonNisa">セゾンNISA取込</button></div>
+  <div class="sbiImport" id="sbiImport">
+    <h3 id="importTitle">SBI iDeCo取込</h3>
+
+    <section class="sbiBlock sbiImageBlock">
+      <div class="sbiBlockHeader">
+        <div class="sbiBlockTitle">画像</div>
+        <div class="imageActions" id="sbiImageActions" hidden>
+          <span class="ocrState" id="sbiOcrState"></span>
+          <button type="button" id="sbiChangeImageBtn">画像を変更</button>
+          <button type="button" id="sbiRerunOcrBtn">OCR再実行</button>
+        </div>
+      </div>
+      <div class="sbiImageArea" id="sbiImageArea">
+        <div class="dropZone" id="sbiDropZone" tabindex="0">
+          <div class="dropTitle" id="importPasteMessage">SBI iDeCoのスクショを貼り付け</div>
+          <div class="small">または画像を選択</div>
+          <input type="file" id="sbiImageInput" accept="image/*" hidden>
+          <button type="button" id="sbiSelectImageBtn">画像を選択</button>
+        </div>
+        <div class="previewWrap" id="sbiPreviewWrap" hidden>
+          <img id="sbiPreview" alt="スクリーンショットプレビュー">
+        </div>
+      </div>
+    </section>
+
+    <section class="sbiBlock readResultPanel">
+      <div class="sbiBlockTitle">読取結果・保存内容</div>
+      <div class="formGrid readResultGrid">
+        <label><span>基準日</span><input type="date" id="sbiDate"></label>
+        <div class="fixedField"><span>資産グループ</span><b id="importAssetGroupLabel">iDeCo（固定）</b></div>
+        <label><span>評価額</span><input type="text" id="sbiAmount" inputmode="numeric" placeholder="5,521,799"></label>
+      </div>
+      <div class="message" id="sbiMessage"></div>
+    </section>
+
+    <section class="sbiBlock savePanel">
+      <button type="button" class="primaryBtn saveBtn" id="sbiSaveBtn">保存</button>
+    </section>
+  </div>
+</section>
+<section class="card section"><h2>日次データ</h2><div class="tableWrap" id="dataTable"></div></section>
+</main>
+<div class="toast" id="toast" aria-live="polite"></div>
+<div class="modalBackdrop" id="modalBackdrop"><div class="modal"><div class="modalHeader"><div class="modalTitle" id="modalTitle"></div><button class="closeBtn" aria-label="閉じる" onclick="closeModal()">×</button></div><div class="modalBody" id="modalBody"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script><script src="./db.js"></script><script src="./app.js"></script>
+</body></html>
