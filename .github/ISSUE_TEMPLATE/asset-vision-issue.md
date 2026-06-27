@@ -7,15 +7,13 @@ assignees: mhiro-code
 
 ---
 
-## 概要
-
----
-
 ## 背景・目的
 
 ---
 
-## 現象（または改善内容）
+## 内容
+
+（バグの場合は現象、機能の場合は改善内容を記載）
 
 ---
 
@@ -27,6 +25,17 @@ assignees: mhiro-code
 
 ---
 
+## 設計への影響
+
+- [ ] UI
+- [ ] DB
+- [ ] AI
+- [ ] Architecture
+- [ ] Product Manifesto
+- [ ] なし
+
+---
+
 ## 完了条件
 
 - [ ]
@@ -35,8 +44,9 @@ assignees: mhiro-code
 
 ## 関連
 
+- Issue：
+- Pull Request：
 - Product Manifesto：
-- 関連Issue：
 
 ---
 
