@@ -1,6 +1,6 @@
 const DB=window.ASSET_LIFELOG_DB;let selectedChannel="ideco_gold";let selectedRange="1Y";
-const {yen,pct,dstr,byDate}=window.AssetVisionCommon;
-const {loadSavedRows,persistSavedRows,mergeSavedRows}=window.AssetVisionStorage;
+const {byDate}=window.AssetVisionCommon;
+const {mergeSavedRows}=window.AssetVisionStorage;
 const {openModal,closeModal,closeModalIfOpen}=window.AssetVisionModal;
 const {openMarketMemo:openMarketMemoDetail,openChannelMemo:openChannelMemoDetail,openChannelDetail:openChannelDetailDetail}=window.AssetVisionDetail;
 const channels=()=>DB.channels.filter(c=>c.active).sort((a,b)=>(a.displayOrder??0)-(b.displayOrder??0));const channel=id=>DB.channels.find(c=>c.id===id);
