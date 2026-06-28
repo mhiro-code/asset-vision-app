@@ -92,3 +92,14 @@ Parent Issue:
 Related PR:
 
 Related Issue:
+
+---
+
+# References
+
+参考資料
+
+- Product Manifesto:
+- Design Document:
+- Related Discussion:
+- Screenshot:
