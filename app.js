@@ -3,11 +3,8 @@ const importProfiles={
   sbiIdeco:{title:"SBI iDeCo取込",channelId:"ideco_gold",assetGroup:"iDeCo",sourceName:"SBI iDeCo",sourceType:"screenshot_ocr",pasteMessage:"SBI iDeCoのスクショを貼り付け",ocrProfile:"sbi_ideco"},
   saisonNisa:{title:"セゾンNISA取込",channelId:"saison_nisa",assetGroup:"セゾンNISA",sourceName:"セゾン投信",sourceType:"screenshot_ocr",pasteMessage:"セゾンNISAのスクショを貼り付け",ocrProfile:"saison_nisa"}
 };
-const STORAGE_KEY="assetVision.accountDaily.v1";
 const {yen,pct,dstr,byDate,todayIso,parseAmountInput,normalizeOcrText,toIsoDate,numberCandidates}=window.AssetVisionCommon;
-function loadSavedRows(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch{return[]}}
-function persistSavedRows(){const custom=DB.accountDaily.filter(r=>r.source_type==="screenshot_ocr"||r.source==="screenshot_ocr");localStorage.setItem(STORAGE_KEY,JSON.stringify(custom))}
-function mergeSavedRows(){for(const r of loadSavedRows()){const i=DB.accountDaily.findIndex(x=>x.date===r.date&&x.channelId===r.channelId);if(i>=0)DB.accountDaily[i]={...DB.accountDaily[i],...r};else DB.accountDaily.push(r)}}
+const {loadSavedRows,persistSavedRows,mergeSavedRows}=window.AssetVisionStorage;
 const channels=()=>DB.channels.filter(c=>c.active).sort((a,b)=>(a.displayOrder??0)-(b.displayOrder??0));const channel=id=>DB.channels.find(c=>c.id===id);
 const rows=id=>DB.accountDaily.filter(r=>r.channelId===id&&r.asset!=null).sort(byDate);const purpose=id=>DB.purposeMaster.find(p=>p.id===id);const latest=id=>rows(id).at(-1);const prev=id=>rows(id).at(-2);const change=(a,b)=>(a==null||b==null)?null:a-b;
 function mainPurposeLabel(c){const p=purpose(c.mainPurpose);return p?`${p.icon} ${p.label}`:"-"}function allPurposeLabels(c){return(c.purposes||[]).map(id=>{const p=purpose(id);return p?`${p.icon} ${p.label}`:id}).join(" / ")}
