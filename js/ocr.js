@@ -40,12 +40,18 @@ window.AssetVisionOcr = (() => {
     return null;
   }
 
+  function isCompactDateNumber(v) {
+    const s = String(v);
+    if (!/^20\d{6}$/.test(s)) return false;
+    return toIsoDate(s.slice(0, 4), s.slice(4, 6), s.slice(6, 8)) != null;
+  }
+
   function numberCandidates(text) {
     const normalized = normalizeOcrText(text);
-    const nums = normalized.match(/\d{1,3}(?:,\d{3})+|\d{6,}/g) || [];
+    const nums = normalized.match(/\d{1,3}(?:\s*,\s*\d{3})+|\d{6,}/g) || [];
     return nums
-      .map(n => Number(n.replace(/,/g, "")))
-      .filter(v => Number.isFinite(v) && v > 10000);
+      .map(n => Number(n.replace(/[\s,]/g, "")))
+      .filter(v => Number.isFinite(v) && v > 10000 && !isCompactDateNumber(v));
   }
 
   function extractAmountNearKeywords(text, keywords) {
@@ -65,13 +71,26 @@ window.AssetVisionOcr = (() => {
     return extractAmountNearKeywords(text, /評価額|資産評価額|時価評価額/) || numberCandidates(text).sort((a, b) => b - a)[0] || null;
   }
 
+  function extractSaisonBaseDate(text) {
+    const commonDate = extractCommonBaseDate(text);
+    if (commonDate) return commonDate;
+    const normalized = normalizeOcrText(text).replace(/\s+/g, " ");
+    let m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日|基準価額適用日|適用日|現在)[^0-9]{0,20}(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?/);
+    if (m) return toIsoDate(m[1], m[2], m[3]);
+    m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日|基準価額適用日|適用日|現在)[^0-9]{0,20}(20\d{2})\s+(\d{1,2})\s+(\d{1,2})/);
+    if (m) return toIsoDate(m[1], m[2], m[3]);
+    m = normalized.match(/(20\d{2})\s+(\d{1,2})\s+(\d{1,2})\s*(?:日)?\s*(?:現在|時点|基準)/);
+    if (m) return toIsoDate(m[1], m[2], m[3]);
+    return null;
+  }
+
   function extractSaisonAmount(text) {
-    return extractAmountNearKeywords(text, /評価額|評価金額|評価額合計|資産評価額|資産合計|合計評価額|時価評価額|お預り資産|お預かり資産|NISA/) || numberCandidates(text).sort((a, b) => b - a)[0] || null;
+    return extractAmountNearKeywords(text, /評価額|評価金額|評価額合計|資産評価額|資産合計|合計評価額|時価評価額|お預り資産|お預かり資産|評価損益/) || numberCandidates(text).sort((a, b) => b - a)[0] || null;
   }
 
   const ocrExtractors = {
     sbi_ideco: {baseDate: extractCommonBaseDate, amount: extractSbiAmount},
-    saison_nisa: {baseDate: extractCommonBaseDate, amount: extractSaisonAmount}
+    saison_nisa: {baseDate: extractSaisonBaseDate, amount: extractSaisonAmount}
   };
 
   async function runCommonOcr(imageDataUrl, options = {}) {
@@ -94,6 +113,7 @@ window.AssetVisionOcr = (() => {
     normalizeOcrText,
     toIsoDate,
     extractCommonBaseDate,
+    extractSaisonBaseDate,
     numberCandidates,
     extractAmountNearKeywords,
     extractSbiAmount,
