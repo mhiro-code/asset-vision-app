@@ -103,3 +103,13 @@ Related Issue:
 - Design Document:
 - Related Discussion:
 - Screenshot:
+
+---
+
+# Definition of Done
+
+このIssueは以下を満たしたら完了とする。
+
+- [ ] Acceptance Criteriaを満たしている
+- [ ] Verificationを完了している
+- [ ] Pull RequestがMergeされている
