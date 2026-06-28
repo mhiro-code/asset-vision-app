@@ -12,11 +12,18 @@ window.AssetVisionOcr = (() => {
   }
 
   function normalizeOcrText(text) {
-    return String(text || "")
+    let normalized = String(text || "")
       .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
       .replace(/[／]/g, "/")
       .replace(/[－ー―]/g, "-")
       .replace(/[，]/g, ",");
+    const japaneseSeparatedBySpaces = /([\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])[ \t　]+([\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}])/gu;
+    let compacted = normalized.replace(japaneseSeparatedBySpaces, "$1$2");
+    while (compacted !== normalized) {
+      normalized = compacted;
+      compacted = normalized.replace(japaneseSeparatedBySpaces, "$1$2");
+    }
+    return normalized;
   }
 
   function toIsoDate(y, m, d) {
@@ -35,6 +42,8 @@ window.AssetVisionOcr = (() => {
     if (m) return toIsoDate(m[1], m[2], m[3]);
     m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日)[^0-9]*(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/);
     if (m) return toIsoDate(m[1], m[2], m[3]);
+    m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日)[^0-9]*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?/);
+    if (m) return toIsoDate(new Date().getFullYear(), m[1], m[2]);
     m = normalized.match(/(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?\s*(?:基準|時点)/);
     if (m) return toIsoDate(m[1], m[2], m[3]);
     return null;
