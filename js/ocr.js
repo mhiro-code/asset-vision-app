@@ -33,7 +33,9 @@ window.AssetVisionOcr = (() => {
     if (m) return toIsoDate(m[1], m[2], m[3]);
     m = normalized.match(/現在\s*(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/);
     if (m) return toIsoDate(m[1], m[2], m[3]);
-    m = normalized.match(/基準日[^0-9]*(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/);
+    m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日)[^0-9]*(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/);
+    if (m) return toIsoDate(m[1], m[2], m[3]);
+    m = normalized.match(/(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?\s*(?:基準|時点)/);
     if (m) return toIsoDate(m[1], m[2], m[3]);
     return null;
   }
@@ -64,7 +66,7 @@ window.AssetVisionOcr = (() => {
   }
 
   function extractSaisonAmount(text) {
-    return extractAmountNearKeywords(text, /評価額|評価金額|資産評価額|資産合計|合計評価額|時価評価額|お預り資産|NISA/) || numberCandidates(text).sort((a, b) => b - a)[0] || null;
+    return extractAmountNearKeywords(text, /評価額|評価金額|評価額合計|資産評価額|資産合計|合計評価額|時価評価額|お預り資産|お預かり資産|NISA/) || numberCandidates(text).sort((a, b) => b - a)[0] || null;
   }
 
   const ocrExtractors = {
