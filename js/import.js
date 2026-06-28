@@ -21,7 +21,20 @@ function updateImportSaveButtonState(){const btn=document.getElementById("sbiSav
 function setOcrState(msg){const el=document.getElementById("sbiOcrState");if(el)el.textContent=msg||""}
 function setImportImageSelected(selected){const drop=document.getElementById("sbiDropZone"),wrap=document.getElementById("sbiPreviewWrap"),actions=document.getElementById("sbiImageActions");if(drop)drop.hidden=!!selected;if(wrap)wrap.hidden=!selected;if(actions)actions.hidden=!selected}
 function clearImportImage(){importImageDataUrl=null;importOcrText="";importOcrResult=null;const img=document.getElementById("sbiPreview");if(img)img.removeAttribute("src");setOcrState("");setImportImageSelected(false)}
-function resetImportForm(){importStateVersion++;clearImportImage();pendingImportOverwrite=null;hooks.closeModalIfOpen();const date=document.getElementById("sbiDate"),amount=document.getElementById("sbiAmount"),input=document.getElementById("sbiImageInput"),saveBtn=document.getElementById("sbiSaveBtn");if(date)date.value=todayIso();if(amount)amount.value="";if(input)input.value="";if(saveBtn)saveBtn.textContent="保存";setImportMessage("");setOcrState("");updateImportSaveButtonState()}
+function resetImportForm(){
+  importStateVersion++;
+  clearImportImage();
+  pendingImportOverwrite=null;
+  hooks.closeModalIfOpen();
+  const date=document.getElementById("sbiDate"),amountInput=document.getElementById("sbiAmount"),input=document.getElementById("sbiImageInput"),saveBtn=document.getElementById("sbiSaveBtn");
+  if(date)date.value=todayIso();
+  if(amountInput)amountInput.value="";
+  if(input)input.value="";
+  if(saveBtn)saveBtn.textContent="保存";
+  setImportMessage("");
+  setOcrState("");
+  updateImportSaveButtonState();
+}
 function updateImportProfileUi(){const p=activeImportProfile();document.querySelectorAll(".importProfileTab").forEach(btn=>btn.classList.toggle("active",btn.dataset.importProfile===activeImportProfileKey));const title=document.getElementById("importTitle");if(title)title.textContent=p.title;const paste=document.getElementById("importPasteMessage");if(paste)paste.textContent=p.pasteMessage;const label=document.getElementById("importAssetGroupLabel");if(label)label.textContent=`${p.assetGroup}（固定）`;const preview=document.getElementById("sbiPreview");if(preview)preview.alt=`${p.title}スクリーンショットプレビュー`;resetImportForm()}
 function handleImportFile(file){if(!file||!file.type.startsWith("image/")){setImportMessage("画像ファイルを選択してください。","bad");return}const reader=new FileReader();reader.onload=()=>{importStateVersion++;importImageDataUrl=reader.result;document.getElementById("sbiPreview").src=importImageDataUrl;setImportImageSelected(true);setImportMessage("");runImportOcr()};reader.readAsDataURL(file)}
 async function runImportOcr(){const p=activeImportProfile();const startedVersion=importStateVersion;const startedProfileKey=activeImportProfileKey;if(!importImageDataUrl){setImportMessage("画像を貼り付けるか選択してください。","bad");return}setOcrState("OCR実行中...");setImportMessage("");try{const text=await runCommonOcr(importImageDataUrl,{onProgress:m=>{if(startedVersion===importStateVersion&&startedProfileKey===activeImportProfileKey)setOcrState(`OCR実行中... ${Math.round((m.progress||0)*100)}%`)}});if(startedVersion!==importStateVersion||startedProfileKey!==activeImportProfileKey)return;importOcrText=text;const {amount,baseDate}=extractOcrValues(text,p);importOcrResult={amount,baseDate,profileKey:activeImportProfileKey};const messages=[];let messageClass="";if(baseDate){document.getElementById("sbiDate").value=baseDate}else{document.getElementById("sbiDate").value=todayIso();messages.push("基準日を認識できませんでした。\n今日の日付をセットしています。必要に応じて変更してください。");messageClass="bad"}if(amount){document.getElementById("sbiAmount").value=amount.toLocaleString("ja-JP")}else{messages.push("評価額を認識できませんでした。\n\n画像プレビューを見ながら手入力してください。");messageClass="bad"}setOcrState("");setImportMessage(messages.join("\n\n"),messageClass);updateImportSaveButtonState()}catch(e){if(startedVersion!==importStateVersion||startedProfileKey!==activeImportProfileKey)return;importOcrText="";importOcrResult=null;document.getElementById("sbiDate").value=todayIso();setOcrState("");setImportMessage("基準日を認識できませんでした。\n今日の日付をセットしています。必要に応じて変更してください。\n\n評価額を認識できませんでした。\n\n画像プレビューを見ながら手入力してください。","bad");updateImportSaveButtonState()}}
