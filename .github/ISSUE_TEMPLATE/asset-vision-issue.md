@@ -7,53 +7,88 @@ assignees: mhiro-code
 
 ---
 
-## 背景・目的
+# Summary
+
+<!-- 1～3行で、このIssueの目的を記載 -->
 
 ---
 
-## 内容
+# Goal
 
-（バグの場合は現象、機能の場合は改善内容を記載）
-
----
-
-## 期待する動作
+<!-- このIssueで達成したいこと -->
 
 ---
 
-## 設計方針
+# Scope
 
----
+今回変更する範囲
 
-## 設計への影響
-
-- [ ] UI
-- [ ] DB
-- [ ] AI
-- [ ] Architecture
-- [ ] Product Manifesto
-- [ ] なし
-
----
-
-## 完了条件
-
+- [ ]
+- [ ]
 - [ ]
 
 ---
 
-## 関連
+# Out of Scope
 
-- Issue：
-- Pull Request：
-- Product Manifesto：
+今回変更しない範囲
 
----
-
-## ラベル候補
-
-bug / enhancement / refactor / architecture / ui / ai / manifesto / mvp
+- [ ]
+- [ ]
+- [ ]
 
 ---
 
-## 備考
+# Constraints
+
+必ず守ること
+
+- 挙動変更禁止（リファクタリング時）
+- 小さなPRで進める
+- Product Manifestoを遵守する
+- FactとMeaningを分離する
+- DBにはFactのみ保存する
+- MeaningはUI・AIで生成する
+- 実測データのみ保存する
+- 推測データは保存しない
+- 未観測と0円を区別する
+
+---
+
+# Implementation Notes
+
+実装方針・参考情報
+
+<!-- 必要に応じて記載 -->
+
+---
+
+# Acceptance Criteria
+
+完了条件
+
+- [ ]
+- [ ]
+- [ ]
+
+---
+
+# Verification
+
+動作確認項目
+
+- [ ] 既存機能に影響がない
+- [ ] Console Errorなし
+- [ ] UI表示確認
+- [ ] 必要な画面動作確認
+- [ ] 必要なテスト実施
+
+---
+
+# Related
+
+Parent Issue:
+
+Related PR:
+
+Related Issue:
