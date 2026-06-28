@@ -36,17 +36,55 @@ window.AssetVisionOcr = (() => {
 
   function extractCommonBaseDate(text) {
     const normalized = normalizeOcrText(text).replace(/\s+/g, " ");
-    let m = normalized.match(/(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?\s*現在/);
-    if (m) return toIsoDate(m[1], m[2], m[3]);
-    m = normalized.match(/現在\s*(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/);
-    if (m) return toIsoDate(m[1], m[2], m[3]);
-    m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日)[^0-9]*(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/);
-    if (m) return toIsoDate(m[1], m[2], m[3]);
-    m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日)[^0-9]*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?/);
-    if (m) return toIsoDate(new Date().getFullYear(), m[1], m[2]);
-    m = normalized.match(/(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?\s*(?:基準|時点)/);
-    if (m) return toIsoDate(m[1], m[2], m[3]);
-    return null;
+    console.log("[OCR date] normalized:", normalized);
+    const pattern1 = /(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?\s*現在/;
+    console.log("[OCR date] testing common pattern1:", pattern1);
+    let m = normalized.match(pattern1);
+    console.log("[OCR date] common pattern1:", m);
+    if (m) {
+      const result = toIsoDate(m[1], m[2], m[3]);
+      console.log("[OCR date] result:", result);
+      return result;
+    }
+    const pattern2 = /現在\s*(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/;
+    console.log("[OCR date] testing common pattern2:", pattern2);
+    m = normalized.match(pattern2);
+    console.log("[OCR date] common pattern2:", m);
+    if (m) {
+      const result = toIsoDate(m[1], m[2], m[3]);
+      console.log("[OCR date] result:", result);
+      return result;
+    }
+    const pattern3 = /(?:基準日|評価基準日|基準年月日|年月日)[^0-9]*(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/;
+    console.log("[OCR date] testing common pattern3:", pattern3);
+    m = normalized.match(pattern3);
+    console.log("[OCR date] common pattern3:", m);
+    if (m) {
+      const result = toIsoDate(m[1], m[2], m[3]);
+      console.log("[OCR date] result:", result);
+      return result;
+    }
+    const pattern4 = /(?:基準日|評価基準日|基準年月日|年月日)[^0-9]*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?/;
+    console.log("[OCR date] testing common pattern4:", pattern4);
+    m = normalized.match(pattern4);
+    console.log("[OCR date] common pattern4:", m);
+    if (m) {
+      const result = toIsoDate(new Date().getFullYear(), m[1], m[2]);
+      console.log("[OCR date] result:", result);
+      return result;
+    }
+    const pattern5 = /(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?\s*(?:基準|時点)/;
+    console.log("[OCR date] testing common pattern5:", pattern5);
+    m = normalized.match(pattern5);
+    console.log("[OCR date] common pattern5:", m);
+    if (m) {
+      const result = toIsoDate(m[1], m[2], m[3]);
+      console.log("[OCR date] result:", result);
+      return result;
+    }
+    const result = null;
+    console.log("[OCR date] result:", result);
+    return result;
   }
 
   function isCompactDateNumber(v) {
@@ -82,15 +120,40 @@ window.AssetVisionOcr = (() => {
 
   function extractSaisonBaseDate(text) {
     const commonDate = extractCommonBaseDate(text);
+    console.log("[OCR date] saison common result:", commonDate);
     if (commonDate) return commonDate;
     const normalized = normalizeOcrText(text).replace(/\s+/g, " ");
-    let m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日|基準価額適用日|適用日|現在)[^0-9]{0,20}(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?/);
-    if (m) return toIsoDate(m[1], m[2], m[3]);
-    m = normalized.match(/(?:基準日|評価基準日|基準年月日|年月日|基準価額適用日|適用日|現在)[^0-9]{0,20}(20\d{2})\s+(\d{1,2})\s+(\d{1,2})/);
-    if (m) return toIsoDate(m[1], m[2], m[3]);
-    m = normalized.match(/(20\d{2})\s+(\d{1,2})\s+(\d{1,2})\s*(?:日)?\s*(?:現在|時点|基準)/);
-    if (m) return toIsoDate(m[1], m[2], m[3]);
-    return null;
+    console.log("[OCR date] saison normalized:", normalized);
+    const pattern1 = /(?:基準日|評価基準日|基準年月日|年月日|基準価額適用日|適用日|現在)[^0-9]{0,20}(20\d{2})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})\s*(?:日)?/;
+    console.log("[OCR date] testing saison pattern1:", pattern1);
+    let m = normalized.match(pattern1);
+    console.log("[OCR date] saison pattern1:", m);
+    if (m) {
+      const result = toIsoDate(m[1], m[2], m[3]);
+      console.log("[OCR date] saison result:", result);
+      return result;
+    }
+    const pattern2 = /(?:基準日|評価基準日|基準年月日|年月日|基準価額適用日|適用日|現在)[^0-9]{0,20}(20\d{2})\s+(\d{1,2})\s+(\d{1,2})/;
+    console.log("[OCR date] testing saison pattern2:", pattern2);
+    m = normalized.match(pattern2);
+    console.log("[OCR date] saison pattern2:", m);
+    if (m) {
+      const result = toIsoDate(m[1], m[2], m[3]);
+      console.log("[OCR date] saison result:", result);
+      return result;
+    }
+    const pattern3 = /(20\d{2})\s+(\d{1,2})\s+(\d{1,2})\s*(?:日)?\s*(?:現在|時点|基準)/;
+    console.log("[OCR date] testing saison pattern3:", pattern3);
+    m = normalized.match(pattern3);
+    console.log("[OCR date] saison pattern3:", m);
+    if (m) {
+      const result = toIsoDate(m[1], m[2], m[3]);
+      console.log("[OCR date] saison result:", result);
+      return result;
+    }
+    const result = null;
+    console.log("[OCR date] saison result:", result);
+    return result;
   }
 
   function extractSaisonAmount(text) {
