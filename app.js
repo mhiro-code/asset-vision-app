@@ -8,11 +8,11 @@ const rows=id=>DB.accountDaily.filter(r=>r.channelId===id&&r.asset!=null).sort(b
 function lastMemoForChannel(id){return DB.channelMemos.filter(m=>m.channelId===id).sort(byDate).at(-1)}function latestMarketMemo(){return DB.marketMemos.slice().sort(byDate).at(-1)}
 function renderSummary(){window.AssetVisionDashboard.renderSummary({channels,latest,prev,rows})}
 function renderChannelTable(){window.AssetVisionDashboard.renderChannelTable({channels,latest,prev,purpose,lastMemoForChannel})}
-function setupControls(){document.getElementById("channelSelect").innerHTML=channels().map(c=>`<option value="${c.id}">${c.name}</option>`).join("");document.getElementById("channelSelect").value=selectedChannel;document.getElementById("channelSelect").onchange=e=>{selectedChannel=e.target.value;renderChart();renderDataTable()};document.querySelectorAll("[data-range]").forEach(btn=>{btn.classList.toggle("active",btn.dataset.range===selectedRange);btn.onclick=()=>{selectedRange=btn.dataset.range;setupControls();renderChart();renderDataTable()}})}
 function renderChart(){window.AssetVisionChart.renderChart({selectedChannel,selectedRange,channel,rows})}
 function renderDataTable(){window.AssetVisionDashboard.renderDataTable({selectedChannel,selectedRange,rows})}
 function openMarketMemo(){openMarketMemoDetail({memo:latestMarketMemo()})}
 function openChannelMemo(id){openChannelMemoDetail({channel:channel(id),memo:lastMemoForChannel(id)})}
 function openChannelDetail(id){openChannelDetailDetail({channel:channel(id),rows:rows(id),allPurposeLabels})}
-function init(){mergeSavedRows();document.getElementById("appVer").textContent=`${DB.app.name} v${DB.app.version}`;renderSummary();renderChannelTable();setupControls();renderChart();renderDataTable();window.AssetVisionImport.setup({rows,openModal,closeModal,closeModalIfOpen,refreshAfterSave:channelId=>{renderSummary();renderChannelTable();selectedChannel=channelId;setupControls();renderChart();renderDataTable()}});document.getElementById("modalBackdrop").addEventListener("click",e=>{if(e.target.id==="modalBackdrop")closeModal()})}
+function setupControls(){window.AssetVisionAppInit.setupControls({channels,getSelectedChannel:()=>selectedChannel,setSelectedChannel:value=>{selectedChannel=value},getSelectedRange:()=>selectedRange,setSelectedRange:value=>{selectedRange=value},renderChart,renderDataTable})}
+function init(){window.AssetVisionAppInit.init({DB,mergeSavedRows,setupControls,renderSummary,renderChannelTable,renderChart,renderDataTable,rows,openModal,closeModal,closeModalIfOpen,setSelectedChannel:value=>{selectedChannel=value}})}
 init();
